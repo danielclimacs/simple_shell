@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
         arg = args; // reset arg to point to the beginning of the args array for each new command input
         *arg++ = strtok(buffer, SEPARATOR); // splitting the input into tokens using the separator and storing them in the args array, the ++ moves the pointer to the next position in the array for the next token to be assigned in the list
         
-        while ((*arg++ = strtok(NULL, SEPARATOR))); // the while loop continues to call strtok with NULL to get the next token until there are no more tokens left, at which point strtok returns NULL and the loop terminates
+        while ((*arg++ = strtok(NULL, SEPARATOR)) != NULL); // the while loop continues to call strtok with NULL to get the next token until there are no more tokens left, at which point strtok returns NULL and the loop terminates
 
         if (args[0] == NULL) { // if there is no input
             continue;

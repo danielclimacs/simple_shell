@@ -66,7 +66,7 @@ int do_environ(void) {
 }
 
 int do_echo(char *args[]) {
-    int i = 0;
+    int i = 1;
 
     while (args[i] != NULL) { // loop through the args
         printf("%s ", args[i]); // print each argument
