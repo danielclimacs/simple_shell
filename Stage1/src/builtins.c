@@ -79,7 +79,8 @@ int do_echo(char *args[]) {
 }
 
 int do_help(void) {
-    system("more manual/readme.txt"); // system call to display the manual file one screen at a time using more
+    system("more manual/README.txt"); // system call to display the manual file one screen at a time using more
+    
     return 0;
 }
 

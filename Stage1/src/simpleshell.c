@@ -6,19 +6,47 @@ int main(int argc, char *argv[]) {
 
     char buffer[MAX_BUF]; // defining buffer with max buffer size where input will be stored
     char prompt[PATH_MAX]; // defining prompt with max path size where current directory will be stored
+    char shell_path[PATH_MAX]; // defining the shell path where the full path to our program is stored
     char *args[MAX_ARGS]; // defining arg as an array of strings where the tokenised arguments will be stored
     char **arg = args; // defining arg as a pointer to the first element of args array
+    FILE *input = stdin; // defining pfile as a pointer to a file, initially set to standard input
 
-    while (1) { // infinite loop to continuously prompt for input until the user decides to quit
-        if (getcwd(prompt, PATH_MAX) == NULL) { // getcwd gets the current working directory and stores it in prompt. If it fails, it returns NULL
-            perror("Path error");
+    if (realpath(argv[0], shell_path) == NULL) { //getting the real path to our program using the first argument and checking for error
+        perror("Error getting path");
+        return 1;
+    } 
+
+    if (setenv("shell", shell_path, 1) != 0) { // setting the shell environmental variable to the full path of our program
+        perror("Shell path update error");
+        return 1;
+    }
+
+    if (argc > 2) { // if there are more than 2 command line arguments, we print an error message and exit the program
+        fprintf(stderr, "Too many arguments\n");
+        return 1;
+    }
+
+    else if (argc == 2) { // if there is a command line argument provided, we will read commands from the file instead of standard input
+        input = fopen(argv[1], "r");
+
+        if (input == NULL) { // if there is an error opening the file, we print an error message and exit the program
+            perror("Error opening file");
             return 1;
         }
+    }
 
-        // print the prompt, which consists of the current directory followed by a $ sign
-        printf("%s$ ", prompt);
+    while (1) { // infinite loop to continuously prompt for input until the user decides to quit
+        if (input == stdin) { // if we are reading from standard input, we want to display the prompt
+            if (getcwd(prompt, PATH_MAX) == NULL) { // getcwd gets the current working directory and stores it in prompt. If it fails, it returns NULL
+                perror("Path error");
+                return 1;
+            }
 
-        if (fgets(buffer, MAX_BUF, stdin) == NULL) { // fgets reads a line of input from stdin and stores it in buffer. It returns NULL if an error occurs or end of file is reached
+            // print the prompt, which consists of the current directory followed by a $ sign only
+            printf("%s$ ", prompt);
+        }
+
+        if (fgets(buffer, MAX_BUF, input) == NULL) { // fgets reads a line of input from either stdin or a file and stores it in buffer. It returns NULL if an error occurs or end of file is reached
             break; // if fgets returns NULL, we print a newline and break the loop to exit the program
         }
 
@@ -27,7 +55,7 @@ int main(int argc, char *argv[]) {
         
         while ((*arg++ = strtok(NULL, SEPARATOR)) != NULL); // the while loop continues to call strtok with NULL to get the next token until there are no more tokens left, at which point strtok returns NULL and the loop terminates
 
-        if (args[0] == NULL) { // if there is no input
+        if (args[0] == NULL) { // if there is no input we just continue to the next iteration of the loop 
             continue;
         }
 
@@ -67,10 +95,15 @@ int main(int argc, char *argv[]) {
         }
         else
         {
-            printf("Command not recognised\n");
+            printf("%s: Command not recognised\n", args[0]);
         }
     }
 
+    if (input != stdin) { // if we were reading from a file, we need to close it before exiting the program
+        fclose(input);
+    }
+
+    printf("\n"); // print a newline before exiting the program
     
     return 0;
 }
