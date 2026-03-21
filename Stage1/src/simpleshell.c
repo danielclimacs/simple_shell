@@ -9,9 +9,9 @@ int main(int argc, char *argv[]) {
     char shell_path[PATH_MAX]; // defining the shell path where the full path to our program is stored
     char *args[MAX_ARGS]; // defining arg as an array of strings where the tokenised arguments will be stored
     char **arg = args; // defining arg as a pointer to the first element of args array
-    FILE *input = stdin; // defining pfile as a pointer to a file, initially set to standard input
+    FILE *input = stdin; // defining input as a pointer to a file, initially set to standard input
 
-    if (realpath(argv[0], shell_path) == NULL) { //getting the real path to our program using the first argument and checking for error
+    if (realpath(argv[0], shell_path) == NULL) { // getting the real path to our program using the first argument and checking for error
         perror("Error getting path");
         return 1;
     } 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (argc > 2) { // if there are more than 2 command line arguments, we print an error message and exit the program
-        fprintf(stderr, "Too many arguments\n");
+        perror("Too many arguments\n");
         return 1;
     }
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (fgets(buffer, MAX_BUF, input) == NULL) { // fgets reads a line of input from either stdin or a file and stores it in buffer. It returns NULL if an error occurs or end of file is reached
-            break; // if fgets returns NULL, we print a newline and break the loop to exit the program
+            break; // if fgets returns NULL, we break the loop to exit the program
         }
 
         arg = args; // reset arg to point to the beginning of the args array for each new command input
