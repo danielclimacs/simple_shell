@@ -18,7 +18,7 @@ DESCRIPTION
     matches one of the built-in commands, the corresponding function
     is executed.
 
-COMMANDS
+INTERNAL COMMANDS
     cd [directory]
         Changes the current working directory.
 
@@ -44,12 +44,13 @@ COMMANDS
         Terminates the shell.
 
 ENVIRONMENT
-    The shell accesses environment variables using the POSIX-compliant
-    environment list provided by the variable 'environ'.
+    The shell sets the environment variable "shell" to the full 
+    path of the simpleshell executable.
 
-    Environment variables are stored as strings in the format:
-
-        NAME=value
+    When an external command is executed, the child inherits the shell's 
+    environment variables (because of the execvp function). Also, a "parent"
+    environment variable is created inside the child process, which contains
+    the full path to the simple shell program that launched it.
 
 FILES
     simpleshell.c

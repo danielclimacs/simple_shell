@@ -44,12 +44,8 @@ COMMANDS
         Terminates the shell.
 
 ENVIRONMENT
-    The shell accesses environment variables using the POSIX-compliant
-    environment list provided by the variable 'environ'.
-
-    Environment variables are stored as strings in the format:
-
-        NAME=value
+    The shell sets the environment variable "shell" to the full 
+    path of the simpleshell executable.
 
 FILES
     simpleshell.c
