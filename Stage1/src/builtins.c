@@ -2,6 +2,7 @@
 
 #include "simpleshell.h"
 
+// CD function. Changes the current working directory to the one provided as an argument. If no argument is provided, it prints the current working directory. It also updates the PWD environment variable to reflect the new current directory.
 int do_cd(char *args[]) {
 
     char cwd[PATH_MAX]; // defining cwd with max path size where current directory will be stored
@@ -34,12 +35,14 @@ int do_cd(char *args[]) {
     return 0;
 }
 
+// CLR function. Clears the terminal screen using the system call "clear" command.
 int do_clr(void) {
     system("clear"); // system call to clear screen
 
     return 0;
 }
 
+// DIR function. Lists the contents of the directory provided as an argument. If no argument is provided, it lists the contents of the current directory. It uses the system call "ls -al" to display all the contents in long format.
 int do_dir(char *args[]) {
     char command[MAX_BUF];
     char *directory = "."; // current dir
@@ -54,6 +57,7 @@ int do_dir(char *args[]) {
     return 0;
 }
 
+// ENVIRON function. Prints all the environment variables. It loops through the environ array and prints each environment variable followed by a newline.
 int do_environ(void) {
     char **env = environ; // create a pointer env that points to the first element of the environ array
 
@@ -65,11 +69,12 @@ int do_environ(void) {
     return 0;
 }
 
+// ECHO function. Prints the arguments provided after the echo command.
 int do_echo(char *args[]) {
-    int i = 1;
+    int i = 1; // array starts from index 1 as index 0 is the command "echo"
 
     while (args[i] != NULL) { // loop through the args
-        printf("%s ", args[i]); // print each argument
+        printf("%s ", args[i]); // print each argument followed by a space
         i++;
     }
 
@@ -78,12 +83,14 @@ int do_echo(char *args[]) {
     return 0;
 }
 
+// HELP function. Displays the manual page for the simpleshell program using the system call "more" command to show the contents of the manual file one screen at a time.
 int do_help(void) {
     system("more manual/README.txt"); // system call to display the manual file one screen at a time using more
     
     return 0;
 }
 
+// PAUSE function. Pauses the shell until the user presses Enter.
 int do_pause(void) {
     char buffer[MAX_BUF]; // defining buffer with max buffer size where the input will be stored
 

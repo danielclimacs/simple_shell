@@ -4,12 +4,16 @@
 
 int main(int argc, char *argv[]) {
 
+    //////////////////////////////VARIABLE DECLARATION//////////////////////////////
+
     char buffer[MAX_BUF]; // defining buffer with max buffer size where input will be stored
     char prompt[PATH_MAX]; // defining prompt with max path size where current directory will be stored
     char shell_path[PATH_MAX]; // defining the shell path where the full path to our program is stored
     char *args[MAX_ARGS]; // defining arg as an array of strings where the tokenised arguments will be stored
     char **arg = args; // defining arg as a pointer to the first element of args array
     FILE *input = stdin; // defining input as a pointer to a file, initially set to standard input
+
+    //////////////////////////////SHELL INITIALISATION//////////////////////////////
 
     if (realpath(argv[0], shell_path) == NULL) { // getting the real path to our program using the first argument and checking for error
         perror("Error getting path");
@@ -35,6 +39,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    //////////////////////////////SHELL RUNNING//////////////////////////////
+
     while (1) { // infinite loop to continuously prompt for input until the user decides to quit
         if (input == stdin) { // if we are reading from standard input, we want to display the prompt
             if (getcwd(prompt, PATH_MAX) == NULL) { // getcwd gets the current working directory and stores it in prompt. If it fails, it returns NULL
@@ -59,7 +65,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        //////////////////////////////Commands////////////////////////////////
+        //////////////////////////////Commands//////////////////////////////
 
         if (strcmp(args[0], "cd") == 0)
         {

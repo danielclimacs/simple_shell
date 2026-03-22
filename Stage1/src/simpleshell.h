@@ -1,5 +1,7 @@
 // this header file contains all definitions and declarations for the main shell program
 
+////////////////////////////////INCLUDES//////////////////////////////
+
 #ifndef SIMPLESHELL_H // include guard to prevent multiple inclusions of this header file
 #define SIMPLESHELL_H
 
@@ -9,12 +11,15 @@
 #include <unistd.h>
 #include <limits.h>
 
+////////////////////////////////DEFINITIONS//////////////////////////////
+
 #define MAX_BUF 1024 // max buffer size
 #define MAX_ARGS 64 // max number of arguments
 #define SEPARATOR " \t\n" // separator for tokenizing input 
 
-
 extern char **environ; // declare environ as an external variable, which is a pointer to an array of strings containing the environment variables 
+
+//////////////////////////////FUNCTION PROTOTYPES//////////////////////////////
 
 int do_cd(char *args[]);
 int do_clr(void);

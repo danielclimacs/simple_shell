@@ -20,13 +20,15 @@ DESCRIPTION
 
 INTERNAL COMMANDS
     cd [directory]
-        Changes the current working directory.
+        Changes the current working directory. 
+        If no directory is provided, it prints the current working directory path.
 
     clr
         Clears the terminal screen.
 
     dir [directory]
         Displays the contents of a directory.
+        If no directory is provided, it displays the contents of the current working directory
 
     echo [text]
         Displays the text entered by the user.
@@ -35,7 +37,7 @@ INTERNAL COMMANDS
         Lists all environment variables available to the shell.
 
     help
-        Displays help information for the shell.
+        Displays the manual page with information for the shell.
 
     pause
         Pauses execution of the shell until the user presses Enter.
