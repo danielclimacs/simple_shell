@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     }
 
     //////////////////////////////SHELL RUNNING//////////////////////////////
-    
+
     while (1) { // infinite loop to continuously prompt for input until the user decides to quit
         if (input == stdin) { // if we are reading from standard input, we want to display the prompt
             if (getcwd(prompt, PATH_MAX) == NULL) { // getcwd gets the current working directory and stores it in prompt. If it fails, it returns NULL
@@ -58,51 +58,59 @@ int main(int argc, char *argv[]) {
 
         arg = args; // reset arg to point to the beginning of the args array for each new command input
         *arg++ = strtok(buffer, SEPARATOR); // splitting the input into tokens using the separator and storing them in the args array, the ++ moves the pointer to the next position in the array for the next token to be assigned in the list
-        
+
         while ((*arg++ = strtok(NULL, SEPARATOR)) != NULL); // the while loop continues to call strtok with NULL to get the next token until there are no more tokens left, at which point strtok returns NULL and the loop terminates
 
         if (args[0] == NULL) { // if there is no input we just continue to the next iteration of the loop 
             continue;
         }
 
+        Command cmd;
+
+        if (parse_command(args, &cmd) != 0) { // we parse the command and check for any errors in the input. If there is an error, we print an error message and continue to the next iteration of the loop
+            continue;
+        }
+
         //////////////////////////////Commands////////////////////////////////
 
-        if (strcmp(args[0], "cd") == 0)
+        if (strcmp(cmd.argv[0], "cd") == 0)
         {
             do_cd(args);
         }
-        else if (strcmp(args[0], "clr") == 0)
+        else if (strcmp(cmd.argv[0], "clr") == 0)
         {
             do_clr();
         }
-        else if (strcmp(args[0], "dir") == 0)
+        else if (strcmp(cmd.argv[0], "dir") == 0)
         {
             do_dir(args);
         }
-        else if (strcmp(args[0], "environ") == 0)
+        else if (strcmp(cmd.argv[0], "environ") == 0)
         {
             do_environ();
         }
-        else if (strcmp(args[0], "echo") == 0)
+        else if (strcmp(cmd.argv[0], "echo") == 0)
         {
             do_echo(args);
         }
-        else if (strcmp(args[0], "help") == 0)
+        else if (strcmp(cmd.argv[0], "help") == 0)
         {
             do_help();
         }
-        else if (strcmp(args[0], "pause") == 0)
+        else if (strcmp(cmd.argv[0], "pause") == 0)
         {
             do_pause();
         }
-        else if (strcmp(args[0], "quit") == 0)
+        else if (strcmp(cmd.argv[0], "quit") == 0)
         {
             break;
         }
         else
         {
             // STAGE 2 ADDITION
-            external_command(args , shell_path); 
+            if (external_command(args, shell_path) != 0) {
+                continue;
+            }
         }
     }
 

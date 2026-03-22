@@ -100,31 +100,6 @@ int do_pause(void) {
     return 0;
 }
 
-// STAGE 2 ADDITIONS
-// this function will run if any of the above commands were not recognised, it will attempt to execute whatever unknown command by forking a child process and using exec to run the command in the child process, while the parent process waits for the child to finish before continuing to prompt for input again
-int external_command(char *args[], char *shell_path) { // we also get the already stored shell path to set it to parent in the child process environment 
-    pid_t pid;
-
-    switch (pid = fork()) { // forking and sending its pid into the variable pid
-        case -1: // checking if forking failed
-            perror("Creating child process failed.");
-            return 1;
-        case 0: // if pid is 0, meaning child process
-            if (setenv("parent", shell_path, 1) == -1) {
-                perror("Failed setting environment in child process");
-                exit(1); // we exit the child process if it failed
-            }
-            if (execvp(args[0], args) == -1) { // using execvp as it searches for PATH automatically. Passing it the command name, followed by any arguments. It will attempt to execute the command, shows error if it fails
-                perror("Executing external command failed");
-                return 1;
-            };
-        default: // parent process
-            wait(NULL); // waiting for child to finish before continuing to prompt for input again, NULL means we don't care about the exit status of the child
-    }
-
-    return 0;
-}
-
 /*
 Daniel Clima
 39488

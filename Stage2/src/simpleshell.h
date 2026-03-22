@@ -13,6 +13,7 @@
 // STAGE 2 ADDITIONS
 #include <sys/types.h> // for pid_t 
 #include <sys/wait.h> // for wait
+#include <fcntl.h> // for open()
 
 //////////////////////////////DEFINITIONS//////////////////////////////
 
@@ -21,6 +22,17 @@
 #define SEPARATOR " \t\n" // separator for tokenizing input 
 
 extern char **environ; // declare environ as an external variable, which is a pointer to an array of strings containing the environment variables 
+
+//////////////////////////////STRUCTS//////////////////////////////
+
+// STAGE 2 ADDITION - we define a struct to hold the command information
+typedef struct {
+    char *argv[MAX_ARGS]; // the arguments for the command, including the command name
+    char *input_file; // contains the file for redirection of input, otherwise NULL
+    char *output_file; // contains the file for redirection of output, otherwise NULL
+    int append; // flag to indicate if output should be appended to the file instead of overwriting, 0 for overwrite, 1 for append
+    int background; // flag to indicate if the command should be run in the background
+} Command;
 
 //////////////////////////////FUNCTION PROTOTYPES//////////////////////////////
 
@@ -31,7 +43,9 @@ int do_environ(void);
 int do_echo(char *args[]);
 int do_help(void);
 int do_pause(void);
-int external_command(char *args[], char *shell_path); // STAGE 2 ADDITION
+// STAGE 2 ADDITIONS
+int external_command(char *args[], char *shell_path); 
+int parse_command(char *args[], Command *cmd); 
 
 #endif
 
