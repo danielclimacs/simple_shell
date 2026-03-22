@@ -18,6 +18,11 @@ DESCRIPTION
     matches one of the built-in commands, the corresponding function
     is executed.
 
+    The shell can also be invoked with a single command line argument
+    that will activate batch mode. Where the shell will read from the input 
+    file, line by line, tokenize each line, and similarily, attempt to execute 
+    the commands inside the file.
+
 INTERNAL COMMANDS
     cd [directory]
         Changes the current working directory. 
