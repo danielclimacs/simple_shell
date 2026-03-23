@@ -1,0 +1,11 @@
+batchfile
+bin
+hello.txt
+makefile
+manual
+src
+README.md
+Stage1
+Stage2
+Stage3
+dups.c

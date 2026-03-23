@@ -61,13 +61,14 @@ int main(int argc, char *argv[]) {
 
         while ((*arg++ = strtok(NULL, SEPARATOR)) != NULL); // the while loop continues to call strtok with NULL to get the next token until there are no more tokens left, at which point strtok returns NULL and the loop terminates
 
-        if (args[0] == NULL) { // if there is no input we just continue to the next iteration of the loop 
-            continue;
-        }
-
-        Command cmd;
+        // STAGE 2 ADDITION 
+        Command cmd; // we define a variable of type Command struct to hold the command information after parsing the input
 
         if (parse_command(args, &cmd) != 0) { // we parse the command and check for any errors in the input. If there is an error, we print an error message and continue to the next iteration of the loop
+            continue;
+        }
+        
+        if (cmd.argv[0] == NULL) { // if there is no input we just continue to the next iteration of the loop 
             continue;
         }
 
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
 
         if (strcmp(cmd.argv[0], "cd") == 0)
         {
-            do_cd(args);
+            do_cd(cmd.argv);
         }
         else if (strcmp(cmd.argv[0], "clr") == 0)
         {
@@ -83,7 +84,7 @@ int main(int argc, char *argv[]) {
         }
         else if (strcmp(cmd.argv[0], "dir") == 0)
         {
-            do_dir(args);
+            do_dir(cmd.argv);
         }
         else if (strcmp(cmd.argv[0], "environ") == 0)
         {
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
         }
         else if (strcmp(cmd.argv[0], "echo") == 0)
         {
-            do_echo(args);
+            do_echo(cmd.argv);
         }
         else if (strcmp(cmd.argv[0], "help") == 0)
         {
@@ -108,7 +109,7 @@ int main(int argc, char *argv[]) {
         else
         {
             // STAGE 2 ADDITION
-            if (external_command(args, shell_path) != 0) {
+            if (external_command(&cmd, shell_path) != 0) {
                 continue;
             }
         }

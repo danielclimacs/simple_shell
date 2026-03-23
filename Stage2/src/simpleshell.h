@@ -44,7 +44,7 @@ int do_echo(char *args[]);
 int do_help(void);
 int do_pause(void);
 // STAGE 2 ADDITIONS
-int external_command(char *args[], char *shell_path); 
+int external_command(Command *cmd, char *shell_path); 
 int parse_command(char *args[], Command *cmd); 
 
 #endif
