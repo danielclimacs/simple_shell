@@ -12,7 +12,7 @@
 #include <limits.h>
 // STAGE 2 ADDITIONS
 #include <sys/types.h> // for pid_t 
-#include <sys/wait.h> // for wait
+#include <sys/wait.h> // for wait 
 #include <fcntl.h> // for open()
 
 //////////////////////////////DEFINITIONS//////////////////////////////
@@ -25,7 +25,7 @@ extern char **environ; // declare environ as an external variable, which is a po
 
 //////////////////////////////STRUCTS//////////////////////////////
 
-// STAGE 2 ADDITION - we define a struct to hold the command information
+// STAGE 2 ADDITION - we define a struct to hold information about the command that was entered
 typedef struct {
     char *argv[MAX_ARGS]; // the arguments for the command, including the command name
     char *input_file; // contains the file for redirection of input, otherwise NULL
@@ -36,6 +36,7 @@ typedef struct {
 
 //////////////////////////////FUNCTION PROTOTYPES//////////////////////////////
 
+// built-in command functions
 int do_cd(char *args[]);
 int do_clr(void);
 int do_dir(char *args[]);
@@ -44,8 +45,10 @@ int do_echo(char *args[]);
 int do_help(void);
 int do_pause(void);
 // STAGE 2 ADDITIONS
+// utility functions
+int parse_command(char *args[], Command *cmd); // function for handling the parsing of tokenised input into the Command struct for information about a command
+int execute_command(Command *cmd, char *shell_path); // function for checking and executing commands
 int external_command(Command *cmd, char *shell_path); 
-int parse_command(char *args[], Command *cmd); 
 int redirection_start(Command *cmd, int *stdout_backup);
 int redirection_end(int stdout_backup);
 

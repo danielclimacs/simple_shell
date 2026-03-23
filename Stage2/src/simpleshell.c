@@ -12,7 +12,6 @@ int main(int argc, char *argv[]) {
     char *args[MAX_ARGS]; // defining arg as an array of strings where the tokenised arguments will be stored
     char **arg = args; // defining arg as a pointer to the first element of args array
     FILE *input = stdin; // defining input as a pointer to a file, initially set to standard input
-    int stdout_backup; // backup for the original stdout file descriptor
 
     //////////////////////////////SHELL INITIALISATION//////////////////////////////
 
@@ -43,6 +42,9 @@ int main(int argc, char *argv[]) {
     //////////////////////////////SHELL RUNNING//////////////////////////////
 
     while (1) { // infinite loop to continuously prompt for input until the user decides to quit
+
+        while (waitpid(-1, NULL, WNOHANG) > 0); // WNOHANG - not blocking, this process checks for any child processes that have finished executing in the background and removes them to prevent accumulation of zombie processes. It does this by calling waitpid with a pid of -1 to check for any child process
+
         if (input == stdin) { // if we are reading from standard input, we want to display the prompt
             if (getcwd(prompt, PATH_MAX) == NULL) { // getcwd gets the current working directory and stores it in prompt. If it fails, it returns NULL
                 perror("Path error");
@@ -68,93 +70,19 @@ int main(int argc, char *argv[]) {
         if (parse_command(args, &cmd) != 0) { // we parse the command and check for any errors in the input. If there is an error, we print an error message and continue to the next iteration of the loop
             continue;
         }
-        
-        if (cmd.argv[0] == NULL) { // if there is no input we just continue to the next iteration of the loop 
+
+        //////////////////////////////COMMANDS - STAGE 2 UPDATED////////////////////////////////
+
+        int cmd_result = execute_command(&cmd, shell_path); // we execute the command and store the result to check for errors or quit signal
+
+        if (cmd_result == 1) { // if result is 1, it indicates an error, which was printed inside the function, so we just continue to the next iteration of the loop
             continue;
         }
-
-        //////////////////////////////Commands - STAGE 2 UPDATES////////////////////////////////
-
-        if (strcmp(cmd.argv[0], "cd") == 0)
-        {
-            do_cd(cmd.argv);
-        }
-        else if (strcmp(cmd.argv[0], "clr") == 0)
-        {
-            do_clr();
-        }
-        else if (strcmp(cmd.argv[0], "dir") == 0)
-        {
-            if (redirection_start(&cmd, &stdout_backup) == 1) {
-                continue;
-            }
-
-            do_dir(cmd.argv);
-
-            if (cmd.output_file != NULL) {
-                if (redirection_end(stdout_backup) == 1) {
-                    continue;
-                }
-            }
-        }
-        else if (strcmp(cmd.argv[0], "environ") == 0)
-        {
-            if (redirection_start(&cmd, &stdout_backup) == 1) {
-                continue;
-            }
-
-            do_environ();
-
-            if (cmd.output_file != NULL) {
-                if (redirection_end(stdout_backup) == 1) {
-                    continue;
-                }
-            }
-        }
-        else if (strcmp(cmd.argv[0], "echo") == 0)
-        {
-            if (redirection_start(&cmd, &stdout_backup) == 1) {
-                continue;
-            }
-
-            do_echo(cmd.argv);
-
-            if (cmd.output_file != NULL) {
-                if (redirection_end(stdout_backup) == 1) {
-                    continue;
-                }
-            }
-        }
-        else if (strcmp(cmd.argv[0], "help") == 0)
-        {
-            if (redirection_start(&cmd, &stdout_backup) == 1) {
-                continue;
-            }
-
-            do_help();
-
-            if (cmd.output_file != NULL) {
-                if (redirection_end(stdout_backup) == 1) {
-                    continue;
-                }
-            }
-        }
-        else if (strcmp(cmd.argv[0], "pause") == 0)
-        {
-            do_pause();
-        }
-        else if (strcmp(cmd.argv[0], "quit") == 0)
-        {
-            break;
-        }
-        else
-        {
-            // STAGE 2 ADDITION
-            if (external_command(&cmd, shell_path) != 0) {
-                continue;
-            }
+        else if (cmd_result == 2) { // if the result is 2, it indicates user wants to quit the shell
+            break; // exit the program if user wants to quit
         }
     }
+    //////////////////////////////END OF SHELL////////////////////////////////
 
     if (input != stdin) { // if we were reading from a file, we need to close it before exiting the program
         fclose(input);

@@ -18,10 +18,13 @@ DESCRIPTION
     matches one of the built-in commands, the corresponding function
     is executed.
 
-    The shell can also be invoked with a single command line argument
-    that will activate batch mode. Where the shell will read from the input 
-    file, line by line, tokenize each line, and similarily, attempt to execute 
-    the commands inside the file.
+BATCH MODE
+    The shell can be invoked with a single command line argument, where the
+    argument is a file with specific commands to be executed by the simpleshell.
+    
+    Batch mode reads from that file instead of the keyboard, and does not prompt
+    user for any input. Instead it simply executes any commands given to it and 
+    prints to the terminal screen.
 
 INTERNAL COMMANDS
     cd [directory]
@@ -33,7 +36,8 @@ INTERNAL COMMANDS
 
     dir [directory]
         Displays the contents of a directory.
-        If no directory is provided, it displays the contents of the current working directory
+        If no directory is provided, it displays the contents of the current 
+        working directory
 
     echo [text]
         Displays the text entered by the user.
@@ -51,17 +55,42 @@ INTERNAL COMMANDS
         Terminates the shell.
 
 EXTERNAL COMMANDS
-    The shell provides accessibility to commands located outside of it.
+    Any command not recognised as an internal command is treated as an external
+    program and is executed using fork and exec.
+
+    Examples
+        ls
+        pwd
+        cat myfile.txt
 
 I/O REDIRECTION 
-    The shell allows for redirection of input and output.
+    The shell allows for redirection of input and output to the specified file.
+
+    [command] < [file]
+        Redirects standard input
+
+    [command] > [file]
+        Redirects standard output and overwrites file
+        
+    [command] >> [file]
+        Redirects standard output and appends to file
+
+    Output redirection is also supported for the following internal commands: 
+    dir, environ, echo and help.
 
 BACKGROUND EXECUTION
-    The shell can be run in the background.
+    The shell can be run in the background if the command specified includes 
+    the special background execution symbol "&" at the end of the command. 
+
+    [command] &
+        Executes a command in the background and 
+        immediately returns the user to the terminal
 
 ENVIRONMENT
     The shell sets the environment variable "shell" to the full 
     path of the simpleshell executable.
+
+    shell=/full/path/to/simpleshell
 
     When an external command is executed, the child inherits the shell's 
     environment variables (because of the execvp function). Also, a "parent"
@@ -77,6 +106,9 @@ FILES
 
     simpleshell.h
         Header file containing definitions and declarations.
+
+    utility.c
+        Includes all other functions used by the shell that are not in the built-ins.c.
 
 AUTHOR
     Name: Daniel Clima
