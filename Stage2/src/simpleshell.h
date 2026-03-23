@@ -30,7 +30,7 @@ typedef struct {
     char *argv[MAX_ARGS]; // the arguments for the command, including the command name
     char *input_file; // contains the file for redirection of input, otherwise NULL
     char *output_file; // contains the file for redirection of output, otherwise NULL
-    int append; // flag to indicate if output should be appended to the file instead of overwriting, 0 for overwrite, 1 for append
+    int append; // flag to indicate if output should be appended to the file instead of overwriting, 0 for false, 1 for true
     int background; // flag to indicate if the command should be run in the background
 } Command;
 
@@ -46,6 +46,8 @@ int do_pause(void);
 // STAGE 2 ADDITIONS
 int external_command(Command *cmd, char *shell_path); 
 int parse_command(char *args[], Command *cmd); 
+int redirection_start(Command *cmd, int *stdout_backup);
+int redirection_end(int stdout_backup);
 
 #endif
 

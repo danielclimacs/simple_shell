@@ -50,6 +50,15 @@ INTERNAL COMMANDS
     quit
         Terminates the shell.
 
+EXTERNAL COMMANDS
+    The shell provides accessibility to commands located outside of it.
+
+I/O REDIRECTION 
+    The shell allows for redirection of input and output.
+
+BACKGROUND EXECUTION
+    The shell can be run in the background.
+
 ENVIRONMENT
     The shell sets the environment variable "shell" to the full 
     path of the simpleshell executable.

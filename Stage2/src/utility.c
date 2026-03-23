@@ -89,12 +89,12 @@ int external_command(Command *cmd, char *shell_path) { // we also get the alread
                 }
 
                 if (fd == -1) { // checking if there was an error opening the file
-                    perror("Error opening file.");
+                    perror("Error opening file");
                     exit(1); 
                 }
 
                 if (dup2(fd, STDOUT_FILENO) == -1) { // we change the stdout stream to point to our file, also checking for errors
-                    perror("Redirection failed.");
+                    perror("Redirection failed");
                     close(fd); // we close the file descriptor before returning if there was an error
                     exit(1);
                 }
@@ -106,12 +106,12 @@ int external_command(Command *cmd, char *shell_path) { // we also get the alread
                 fd = open(cmd->input_file, O_RDONLY); // R_ONLY - open file for reading only
                 
                 if (fd == -1) {
-                    perror("Error opening file.");
+                    perror("Error opening file");
                     exit(1);
                 }
 
                 if (dup2(fd, STDIN_FILENO) == -1) {
-                    perror("Redirection failed.");
+                    perror("Redirection failed");
                     exit(1);
                 }
 
@@ -123,8 +123,59 @@ int external_command(Command *cmd, char *shell_path) { // we also get the alread
                 exit(1);
             };
         default: // parent process
-            wait(NULL); // waiting for child to finish before continuing to prompt for input again, NULL means we don't care about the exit status of the child
+            if (!cmd->background) { // STAGE 2 ADDITTION - this checks if the command has been launched in the background, if not we wait for child
+                wait(NULL); // waiting for child to finish before continuing to prompt for input again, NULL means we don't care about the exit status of the child
+            }
     }
+
+    return 0;
+}
+
+int redirection_start(Command *cmd, int *stdout_backup) {
+    int fd;
+
+    if (cmd->output_file == NULL) {
+        return 0;
+    }
+    
+    *stdout_backup = dup(STDOUT_FILENO);
+    if (*stdout_backup == -1) {
+        perror("Failed to backup stdout");
+        return 1;
+    }
+
+    if (!cmd->append) {
+        fd = open(cmd->output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // rewrite
+    }
+    else {
+        fd = open(cmd->output_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // append
+
+    }
+
+    if (fd == -1) {
+        perror("Error opening file");
+        close(*stdout_backup);
+        return 1;
+    }
+
+    if (dup2(fd, STDOUT_FILENO) == -1) {
+        perror("Redirection failed");
+        close(fd);
+        close(*stdout_backup);
+        return 1;
+    }
+
+    close(fd);
+
+    return 0;
+}
+
+int redirection_end(int stdout_backup) {
+    if (dup2(stdout_backup, STDOUT_FILENO) == -1) {
+        perror("Redirection failed.");
+        return 1;
+    }
+    close(stdout_backup);
 
     return 0;
 }

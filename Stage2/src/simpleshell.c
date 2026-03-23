@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
     char *args[MAX_ARGS]; // defining arg as an array of strings where the tokenised arguments will be stored
     char **arg = args; // defining arg as a pointer to the first element of args array
     FILE *input = stdin; // defining input as a pointer to a file, initially set to standard input
+    int stdout_backup; // backup for the original stdout file descriptor
 
     //////////////////////////////SHELL INITIALISATION//////////////////////////////
 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        //////////////////////////////Commands////////////////////////////////
+        //////////////////////////////Commands - STAGE 2 UPDATES////////////////////////////////
 
         if (strcmp(cmd.argv[0], "cd") == 0)
         {
@@ -84,19 +85,59 @@ int main(int argc, char *argv[]) {
         }
         else if (strcmp(cmd.argv[0], "dir") == 0)
         {
+            if (redirection_start(&cmd, &stdout_backup) == 1) {
+                continue;
+            }
+
             do_dir(cmd.argv);
+
+            if (cmd.output_file != NULL) {
+                if (redirection_end(stdout_backup) == 1) {
+                    continue;
+                }
+            }
         }
         else if (strcmp(cmd.argv[0], "environ") == 0)
         {
+            if (redirection_start(&cmd, &stdout_backup) == 1) {
+                continue;
+            }
+
             do_environ();
+
+            if (cmd.output_file != NULL) {
+                if (redirection_end(stdout_backup) == 1) {
+                    continue;
+                }
+            }
         }
         else if (strcmp(cmd.argv[0], "echo") == 0)
         {
+            if (redirection_start(&cmd, &stdout_backup) == 1) {
+                continue;
+            }
+
             do_echo(cmd.argv);
+
+            if (cmd.output_file != NULL) {
+                if (redirection_end(stdout_backup) == 1) {
+                    continue;
+                }
+            }
         }
         else if (strcmp(cmd.argv[0], "help") == 0)
         {
+            if (redirection_start(&cmd, &stdout_backup) == 1) {
+                continue;
+            }
+
             do_help();
+
+            if (cmd.output_file != NULL) {
+                if (redirection_end(stdout_backup) == 1) {
+                    continue;
+                }
+            }
         }
         else if (strcmp(cmd.argv[0], "pause") == 0)
         {
